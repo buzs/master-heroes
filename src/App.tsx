@@ -4,6 +4,9 @@ import { Layout, Typography } from 'antd';
 import 'antd/dist/antd.css';
 import './global.css';
 
+import Welcome from './components/Welcome';
+import HeroCard from './components/HeroCard';
+
 const { Content, Footer } = Layout;
 
 class App extends Component {
@@ -35,6 +38,7 @@ class App extends Component {
 						What is the superhero
 						name?
 					</Typography.Title>
+					<HeroCard />
 				</Content>
 				<Footer
 					style={{
