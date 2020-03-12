@@ -1,26 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { Layout, Typography } from 'antd';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import 'antd/dist/antd.css';
+import './global.css';
+
+const { Content, Footer } = Layout;
+
+class App extends Component {
+	render() {
+		return (
+			<Layout
+				style={{
+					height: '100%',
+					background: '#3B4046'
+				}}
+				className="layout"
+			>
+				<Content
+					style={{
+						padding: '0 50px',
+						alignItems: 'center',
+						justifyContent: 'center',
+						display: 'flex',
+						flexDirection: 'column'
+					}}
+				>
+					<Typography.Title
+						level={1}
+						style={{
+							textAlign: 'center',
+							color: '#CCC'
+						}}
+					>
+						What is the superhero
+						name?
+					</Typography.Title>
+				</Content>
+				<Footer
+					style={{
+						textAlign: 'center',
+						fontSize: '10px',
+						background: '#3B4046',
+						color: '#ccc'
+					}}
+				>
+					using superheros-api made in
+					brazil
+				</Footer>
+			</Layout>
+		);
+	}
 
 export default App;
