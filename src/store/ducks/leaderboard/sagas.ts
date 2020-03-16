@@ -11,41 +11,12 @@ export function* get() {
     const leaders = yield call(rsf.database.read, 'leaders');
 
     yield put(getLeadersSuccess(Object.values(leaders)));
-  } catch {}
+  } catch {
+    console.log('Erro connect to Database');
+  }
 }
 
+// Send to DB
 export function* set(action: any) {
-  console.log(action.playload, 'aaaaaaaa');
   yield call(rsf.database.create, 'leaders', action.payload.leader);
 }
-
-// export function* get() {
-//     try {
-//       const snapshot: QuerySnapshot<Leader[]> = yield call(
-//         rsf.firestore.getCollection,
-//         'leaders'
-//       );
-
-//       let leaders: Leader[];
-
-//       snapshot.forEach(leader => {
-//         leaders = {
-//           ...leaders,
-//           [leader.id]: leader.data(),
-//         };
-//       });
-
-//       //@ts-ignore
-//       yield put(getLeadersSuccess(leaders));
-//     } catch {}
-//   }
-
-//   export function* set() {
-//     yield call(rsf.firestore.addDocument, 'leaders', {
-//       name: 'Gabriel H',
-//       score: 248,
-//       hits: 4,
-//       hitsPorcentege: 47,
-//       time: 5000,
-//     });
-//   }
