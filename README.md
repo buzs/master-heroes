@@ -1,4 +1,6 @@
-# Master Heroes Quiz
+# Master Heroes
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/04b1d542-d463-408e-ad9c-e94736425715/deploy-status)](https://app.netlify.com/sites/admiring-murdock-def9a7/deploys)
 
 a quiz to test your knowledge of superheroes
 
