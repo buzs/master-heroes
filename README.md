@@ -39,4 +39,7 @@ yarn
 yarn dev
 ```
 
+Remember to set the firebase environment variables.<br />
+Use the sample file `.env.exemple` in root folder
+
 More information about the project [https://appmasters.io/pt/blog/selecao-master-heroes/](https://appmasters.io/pt/blog/selecao-master-heroes/)
