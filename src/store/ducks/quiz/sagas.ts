@@ -1,4 +1,5 @@
 import { put, select } from 'redux-saga/effects';
+import Router from 'next/router';
 
 import { rangeArray, objectEqual } from '../../../utils';
 
@@ -21,6 +22,7 @@ export function* popQuestions(action: QuizAction) {
 
 export function* resetGame() {
   yield put(resetScore());
+  Router.push('/');
 }
 
 // FUNCTIONS
