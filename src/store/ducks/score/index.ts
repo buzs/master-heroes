@@ -8,11 +8,17 @@ const INITIAL_STATE: ScoreState = {
 
 const reducer: Reducer<ScoreState> = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case ScoreTypes.ADD_POINT:
+    case ScoreTypes.ADD:
       return {
         ...state,
         points: state.points + 20,
         hits: state.hits + 1,
+      };
+    case ScoreTypes.RESET:
+      return {
+        ...state,
+        points: 0,
+        hits: 0,
       };
     default:
       return state;

@@ -3,7 +3,8 @@
  */
 
 export enum ScoreTypes {
-  ADD_POINT = '@score/ADD_POINT',
+  ADD = '@score/ADD',
+  RESET = '@score/RESET',
 }
 
 /**
