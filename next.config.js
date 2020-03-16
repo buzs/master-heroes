@@ -10,7 +10,7 @@ const themeVariables = lessToJS(
     fs.readFileSync(path.resolve(__dirname, './assets/antd-custom.less'), 'utf8')
 )
 
-const config = withLess({
+module.exports = withLess({
     useFileSystemPublicRoutes: false,
     lessLoaderOptions: {
         javascriptEnabled: true,
@@ -52,5 +52,3 @@ const config = withLess({
         FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID
     }
 })
-
-export default config
