@@ -1,145 +1,93 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button, Typography } from 'antd';
 
 import { Card } from './styles';
 
 import { ApplicationState } from '../../store';
-import api from '../../services/api';
-import { Hero } from '../../store/ducks/heroes/types';
+// import api from '../../services/api';
+// import { Hero } from '../../store/ducks/heroes/types';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { rangeArray } from '../../utils';
 
-import { addPoint } from '../../store/ducks/score/actions';
-import { updateCurrentAmountQuestions } from '../../store/ducks/quiz/actions';
-
-const rangeNumber = (min: number, max: number) =>
-  Math.random() * (max - min) + min;
-
-const rangeInterger = (min: number, max: number) =>
-  Math.round(rangeNumber(min, max));
-
-function rangeArrayNoRepeats<T>(arr: T[]) {
-  let copyArr = arr.slice(0);
-
-  return function(remove = true) {
-    if (copyArr.length < 1) {
-      copyArr = arr.slice(0);
-    }
-    const index = rangeInterger(0, copyArr.length);
-
-    const item = copyArr[index];
-
-    if (remove) {
-      copyArr.splice(index, 1);
-    }
-    return item;
-  };
-}
-
-// function isEqual<T extends Object>(
-// 	object: T,
-// 	otherObject: T
-// ) {
-// 	return (
-// 		JSON.stringify(object) ===
-// 		JSON.stringify(otherObject)
-// 	);
-// }
-
-let lastOption: string[] = [];
-
-function verifyRepeat(element: string, save = true) {
-  console.log(element);
-  if (!lastOption.includes(element) && save) {
-    lastOption = [...lastOption, element];
-    return false;
-  }
-  return true;
-}
+import { addScore } from '../../store/ducks/score/actions';
+import {
+  updateCurrentAmountQuestions,
+  resetGame,
+} from '../../store/ducks/quiz/actions';
 
 export default function HeroCard() {
-  const heroes = useSelector((state: ApplicationState) => state.heroes.data);
-
+  const questions = useSelector(
+    (state: ApplicationState) => state.quiz.questions
+  );
   const score = useSelector((state: ApplicationState) => state.score);
-
   const quiz = useSelector((state: ApplicationState) => state.quiz);
 
   const [heroImage, setHeroImage] = useState<string>('');
   const [names, setNames] = useState<string[]>([]);
-  const [cHero, setCHero] = useState<string>('');
+  const [correctHero, setCorrectHero] = useState<string>('');
 
   const dispach = useDispatch();
+  function chkDupExists(value: string[]) {
+    return new Set(value).size !== value.length;
+  }
 
-  const loadAll = useCallback(async () => {
-    const res = await api.get<Hero[]>('all.json');
+  const anyEqual = (arr: string[]) => {
+    if (chkDupExists(arr)) {
+      arr.forEach((str, idx, _arry) => {
+        let fIndex = arr.indexOf(str);
+        let lIndex = arr.lastIndexOf(str);
 
-    let selectHeroes = rangeArrayNoRepeats(res.data);
-
-    let correctHero = selectHeroes();
-
-    if (verifyRepeat(correctHero.name)) {
-      correctHero = selectHeroes();
+        if (fIndex !== lIndex && idx !== 0) {
+          arr[idx] = rangeArray(questions)?.name;
+        }
+      });
     }
-
-    setHeroImage(correctHero.images.sm);
-
-    const otherHeroesName = [
-      selectHeroes(false).name,
-      selectHeroes(false).name,
-    ];
-
-    function chkDupExists(value: string[]) {
-      return new Set(value).size !== value.length;
-    }
-
-    const anyEqual = (arr: string[]) => {
-      if (chkDupExists(arr)) {
-        arr.forEach((str, idx, _arry) => {
-          let fIndex = arr.indexOf(str);
-          let lIndex = arr.lastIndexOf(str);
-
-          if (fIndex !== lIndex && idx !== 0) {
-            arr[idx] = selectHeroes(false).name;
-          }
-        });
-      }
-    };
-
-    let heroesName = [correctHero.name, ...otherHeroesName];
-
-    setCHero(correctHero.name);
-    anyEqual(heroesName);
-    loadNames(heroesName);
-  }, [heroes]);
+  };
 
   const loadNames = useCallback((names: string[]) => {
     const shuffleNames = names.sort(() => Math.random() - 0.5);
     setNames(shuffleNames);
   }, []);
 
-  useEffect(() => {
-    loadAll();
-  }, []);
+  const generateAll = useCallback(async () => {
+    console.log('generateAll');
+    const correctQuestion = questions.pop();
 
-  async function handleSelectQuestion(selectHero: string) {
-    if (cHero === selectHero) {
-      dispach(addPoint());
+    if (!correctQuestion) return;
+    setHeroImage(correctQuestion.images.sm);
+    setCorrectHero(correctQuestion.name);
+
+    const otherQuestionName = [
+      questions.pop()?.name as string,
+      questions.pop()?.name as string,
+    ];
+
+    let heroesName = [correctQuestion.name, ...otherQuestionName];
+
+    anyEqual(heroesName);
+    loadNames(heroesName);
+  }, [questions]);
+
+  useEffect(() => {
+    generateAll();
+  }, [questions]);
+
+  function handleSelectQuestion(selectHero: string) {
+    if (correctHero === selectHero) {
+      dispach(addScore());
     }
     dispach(updateCurrentAmountQuestions());
-
-    if (quiz.currentAmountQuestion >= quiz.amountQuestions) {
-      await loadAll();
-    } else {
-      console.log('Finalizou');
-    }
   }
 
-  // function changeHeroQuestion(){
-  // 	if
-
-  // 	dispach(null) // adiciona mais uma questão
-
-  // }
+  useEffect(() => {
+    if (quiz.currentAmountQuestion < quiz.amountQuestions) {
+      generateAll();
+    } else {
+      console.log('Finalizou');
+      dispach(resetGame());
+    }
+  }, [quiz.currentAmountQuestion]);
 
   return (
     <>
@@ -174,7 +122,7 @@ export default function HeroCard() {
           {quiz.currentAmountQuestion} / {quiz.amountQuestions}
         </div>
       </Card>
-      <h5>{cHero}</h5>
+      <h5>{correctHero}</h5>
     </>
   );
 }
